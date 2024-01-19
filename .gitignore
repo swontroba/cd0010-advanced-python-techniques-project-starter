@@ -1,0 +1,34 @@
+# IntelliJ
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Vim
+*.sw[op]
+
+# Visual Studio Code
+.vscode/
+
+# Build Systems
+.gradle/
+bin/
+build/
+out/
+errors.json
+
+gradle/wrapper/gradle-wrapper.properties
+
+# environment
+.venv
+venv
+
+# testing things out
+testing.py
+testing
+
+# todo
+.todo
+
+# python
+__pycache__

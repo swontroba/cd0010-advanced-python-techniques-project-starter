@@ -45,10 +45,14 @@ class NearEarthObject:
         # You should coerce these values to their appropriate data type and
         # handle any edge cases, such as a empty name being represented by `None`
         # and a missing diameter being represented by `float('nan')`.
-        self.designation = info.get("designation","")
+        self.designation = info.get("pdes", "")
         self.name = info.get("name", None)
-        self.diameter = float(info.get("diameter", 'nan'))
-        self.hazardous = info.get("hazardous", False)
+        self.diameter = info.get("diameter", float("nan"))
+        # try:
+        #     self.diameter = float(self.diameter)
+        # except ValueError:
+        #     self.diameter = float("nan")
+        self.hazardous = info.get("pha", False)
 
         # Create an empty initial collection of linked approaches.
         self.approaches = []
@@ -103,10 +107,10 @@ class CloseApproach:
         # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
         # You should coerce these values to their appropriate data type and handle any edge cases.
         # The `cd_to_datetime` function will be useful.
-        self._designation = info.get("designation","")
-        self.time = cd_to_datetime(info.get("time", None))  # TODO: Use the cd_to_datetime function for this attribute.
-        self.distance = info.get("distance", 0.0)
-        self.velocity = info.get("velocity", 0.0)
+        self._designation = info.get("des", "")
+        self.time = cd_to_datetime(info.get("cd", None))
+        self.distance = float(info.get("dist", 0.0))
+        self.velocity = float(info.get("v_rel", 0.0))
 
         # Create an attribute for the referenced NEO, originally None.
         # Todo ... check what to do...
@@ -148,11 +152,11 @@ class CloseApproach:
 if __name__ == '__main__':
 
     neo_test = {
-        "designation":"2020 FK", "name":"One REALLY BIG fake asteroid",
-        "diameter":12.34523423, "hazardous":True}
+        "pdes":"2020 FK", "name":"One REALLY BIG fake asteroid",
+        "diameter":12.34523423, "pha":True}
     neo_test2 = {
-        "designation":"2020 FK",
-        "hazardous":True}
+        "pdes":"2020 FK",
+        "pha":True}
     neo = NearEarthObject(neo_test2)
     print(neo.designation)
     print(neo.name)
@@ -160,8 +164,8 @@ if __name__ == '__main__':
     print(neo.hazardous)
     print(neo)
 
-    caproch_test = {"designation":"2020 FK", "time":"2099-Dec-31 20:51",
-                    "distance":12.34523423, "velocity":12.88}
+    caproch_test = {"des": "2020 FK", "cd": "2099-Dec-31 20:51",
+                    "dist": 12.34523423, "v_rel": 12.88}
     ca = CloseApproach(caproch_test)  # Use any sample data here.
     print(type(ca.time))
     print(ca.time_str)
