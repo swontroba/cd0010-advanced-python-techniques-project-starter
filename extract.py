@@ -26,12 +26,25 @@ def load_neos(neo_csv_path):
     :param neo_csv_path: A path to a CSV file containing data about near-Earth objects.
     :return: A collection of `NearEarthObject`s.
     """
-    near_earth_objects = set()
+    near_earth_objects = []
     # TODO: Load NEO data from the given CSV file.
     with open(neo_csv_path, newline='') as csv_file:
         csv_reader = csv.DictReader(csv_file, delimiter=',')
         for row in csv_reader:
-            near_earth_objects.add(NearEarthObject(row))
+            row["name"] = row["name"] if row["name"] else None
+            row["diameter"] = float(row["diameter"]) if row["diameter"] else float("nan")
+            row["pha"] = False if row["pha"] in ["", "N"] else True
+            try:
+                neo = NearEarthObject(
+                    designation = row["pdes"],
+                    name = row["name"],
+                    diameter = row["diameter"],
+                    hazardous = row["pha"],
+                )
+            except Exception as e:
+                print(e)
+            else:
+                near_earth_objects.append(neo)
 
     return near_earth_objects
 
@@ -41,7 +54,7 @@ def load_approaches(cad_json_path):
     :param cad_json_path: A path to a JSON file containing data about close approaches.
     :return: A collection of `CloseApproach`es.
     """
-    close_approachs = set()
+    close_approachs = []
     # TODO: Load close approach data from the given JSON file.
     with open(cad_json_path, newline='') as json_file:
         json_reader = json.load(json_file)
@@ -51,15 +64,18 @@ def load_approaches(cad_json_path):
         ]
         fields = json_reader.get('fields', default_fields)
         for row in data:
-            row = dict(zip(fields, row))
-            close_approachs.add( CloseApproach(row))
+            try:
+                row = dict(zip(json_reader["fields"], row))
+                approach = CloseApproach(
+                    designation=row["des"],
+                    time=row["cd"],
+                    distance=float(row["dist"]),
+                    velocity=float(row["v_rel"]),
+                )
+            except Exception as e:
+                print(e)
+            else:
+                close_approachs.append(approach)
 
     return close_approachs
-
-if __name__ == '__main__':
-    # neo_csv_path = "./tests/test-neos-2020.csv"
-    # neos = load_neos(neo_csv_path)
-
-    cad_json_path = "./data/cad.json"
-    cads = load_approaches(cad_json_path)
 

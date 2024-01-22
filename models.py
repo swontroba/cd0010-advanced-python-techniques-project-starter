@@ -34,33 +34,26 @@ class NearEarthObject:
     """
     # TODO: How can you, and should you, change the arguments to this constructor?
     # If you make changes, be sure to update the comments in this file.
-    def __init__(self, info):
+    def __init__(self, **info):
         # TODO: was **info check if info is ok like this in rest of code
         """Create a new `NearEarthObject`.
 
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
-        # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `designation`, `name`, `diameter`, and `hazardous`.
-        # You should coerce these values to their appropriate data type and
-        # handle any edge cases, such as a empty name being represented by `None`
-        # and a missing diameter being represented by `float('nan')`.
-        self.designation = info.get("pdes", "")
+        self.designation = info.get("designation", "")
         self.name = info.get("name", None)
         self.diameter = info.get("diameter", float("nan"))
-        # try:
-        #     self.diameter = float(self.diameter)
-        # except ValueError:
-        #     self.diameter = float("nan")
-        self.hazardous = info.get("pha", False)
+        try:
+            self.diameter = float(self.diameter)
+        except ValueError:
+            self.diameter = float("nan")
+        self.hazardous = info.get("hazardous", False)
 
-        # Create an empty initial collection of linked approaches.
         self.approaches = []
 
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-        # TODO: Use self.designation and self.name to build a fullname for this object.
         return f'{self.name} {self.designation}'
 
     def __is_hazardous(self):
@@ -95,51 +88,29 @@ class CloseApproach:
     private attribute, but the referenced NEO is eventually replaced in the
     `NEODatabase` constructor.
     """
-    # TODO: How can you, and should you, change the arguments to this constructor?
-    # If you make changes, be sure to update the comments in this file.
-    def __init__(self, info):
-        # TODO: was **info check if info is ok like this in rest of code
+    def __init__(self, **info):
         """Create a new `CloseApproach`.
-
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
         """
-        # TODO: Assign information from the arguments passed to the constructor
-        # onto attributes named `_designation`, `time`, `distance`, and `velocity`.
-        # You should coerce these values to their appropriate data type and handle any edge cases.
-        # The `cd_to_datetime` function will be useful.
-        self._designation = info.get("des", "")
-        self.time = cd_to_datetime(info.get("cd", None))
-        self.distance = float(info.get("dist", 0.0))
-        self.velocity = float(info.get("v_rel", 0.0))
+        self._designation = info.get("designation", "")
+        self.time = cd_to_datetime(info.get("time", None))
+        self.distance = float(info.get("distance", 0.0))
+        self.velocity = float(info.get("velocity", 0.0))
 
         # Create an attribute for the referenced NEO, originally None.
-        # Todo ... check what to do...
-        self.neo = None
+        self.neo = info.get("neo", None)
 
     @property
     def time_str(self):
-        """Return a formatted representation of this `CloseApproach`'s approach time.
-
-        The value in `self.time` should be a Python `datetime` object. While a
-        `datetime` object has a string representation, the default representation
-        includes seconds - significant figures that don't exist in our input
-        data set.
-
-        The `datetime_to_str` method converts a `datetime` object to a
-        formatted string that can be used in human-readable representations and
-        in serialization to CSV and JSON files.
         """
-        # TODO: Use this object's `.time` attribute and the `datetime_to_str` function to
-        # build a formatted representation of the approach time.
-        # TODO: Use self.designation and self.name to build a fullname for this object.
-
-        return f'{datetime_to_str(self.time)}'
+        Return a formatted representation of this `CloseApproach`'s approach time.
+        """
+        if self.time:
+            return datetime_to_str(self.time)
+        return "an unknown time"
 
     def __str__(self):
         """Return `str(self)`."""
-        # TODO: Use this object's attributes to return a human-readable string representation.
-        # The project instructions include one possibility. Peek at the __repr__
-        # method for examples of advanced string formatting.
         return f"On {self.time_str}, '{self._designation}'" \
                f"approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
 
@@ -152,21 +123,22 @@ class CloseApproach:
 if __name__ == '__main__':
 
     neo_test = {
-        "pdes":"2020 FK", "name":"One REALLY BIG fake asteroid",
-        "diameter":12.34523423, "pha":True}
+        "designation": "2020 FK", "name": "One REALLY BIG fake asteroid",
+        "diameter": 12.34523423, "hazardous": True}
     neo_test2 = {
-        "pdes":"2020 FK",
-        "pha":True}
-    neo = NearEarthObject(neo_test2)
+        "designation": "2020 FK",
+        "hazardous": True}
+    neo = NearEarthObject(**neo_test2)
     print(neo.designation)
     print(neo.name)
     print(neo.diameter)
     print(neo.hazardous)
     print(neo)
 
-    caproch_test = {"des": "2020 FK", "cd": "2099-Dec-31 20:51",
-                    "dist": 12.34523423, "v_rel": 12.88}
-    ca = CloseApproach(caproch_test)  # Use any sample data here.
+
+    caproch_test = {"designation": "2020 FK", "time": "2099-Dec-31 20:51",
+                    "distance": 12.34523423, "velocity": 12.88}
+    ca = CloseApproach(**caproch_test)  # Use any sample data here.
     print(type(ca.time))
     print(ca.time_str)
     print(ca.distance)
