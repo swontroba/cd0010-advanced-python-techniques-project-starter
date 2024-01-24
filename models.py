@@ -102,8 +102,14 @@ class CloseApproach:
 
     @property
     def time_str(self):
-        """
-        Return a formatted representation of this `CloseApproach`'s approach time.
+        """Return a formatted representation of this `CloseApproach`'s approach time.
+        The value in `self.time` should be a Python `datetime` object. While a
+        `datetime` object has a string representation, the default representation
+        includes seconds - significant figures that don't exist in our input
+        data set.
+        The `datetime_to_str` method converts a `datetime` object to a
+        formatted string that can be used in human-readable representations and
+        in serialization to CSV and JSON files.
         """
         if self.time:
             return datetime_to_str(self.time)

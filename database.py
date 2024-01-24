@@ -61,7 +61,7 @@ class NEODatabase:
         """Find and return an NEO by its primary designation.
 
         Each NEO in the data set has a unique primary designation, as a string.
-
+        If no match is found, return `None` instead.
         The matching is exact - check for spelling and capitalization if no
         match is found.
 
@@ -102,9 +102,14 @@ class NEODatabase:
         :param filters: A collection of filters capturing user-specified criteria.
         :return: A stream of matching `CloseApproach` objects.
         """
-        # TODO: Generate `CloseApproach` objects that match all of the filters.
-        for approach in self._approaches:
-            yield approach
+        if filters:
+            for approach in self._approaches:
+                # matching all filters
+                if all(map(lambda _filter: _filter(approach), filters)):
+                    yield approach
+        else:
+            for approach in self._approaches:
+                yield approach
 
 
 

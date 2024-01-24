@@ -17,6 +17,7 @@ iterator.
 You'll edit this file in Tasks 3a and 3c.
 """
 import operator
+import itertools
 
 
 class UnsupportedCriterionError(NotImplementedError):
@@ -72,6 +73,81 @@ class AttributeFilter:
         return f"{self.__class__.__name__}(op=operator.{self.op.__name__}, value={self.value})"
 
 
+class DateFilter(AttributeFilter):
+    """Subclass of AttributeFilter to filter CloseApproach objects by date."""
+    @classmethod
+    def get(cls, approach):
+        """Return approach.time converted to datetime.datetime object for the date filter.
+
+        Args:
+            approach (CloseApproach): A CloseApproach object.
+        Returns:
+            [datetime.datetime]: Converted time to datetime object.
+
+        """
+        return approach.time.date()
+
+
+class DistanceFilter(AttributeFilter):
+    """Subclass of AttributeFilter to filter CloseApproach objects by distance."""
+    @classmethod
+    def get(cls, approach):
+        """Return approach.distance for the distance filter.
+
+        Args:
+            approach (CloseApproach): A CloseApproach object.
+        Returns:
+            [float]: Returns the distance of a CloseApproach.
+
+        """
+        return approach.distance
+
+class VelocityFilter(AttributeFilter):
+    """Subclass of AttributeFilter to filter CloseApproach objects by velocity."""
+    @classmethod
+    def get(cls, approach):
+        """Return approach.velocity for the velocity filter.
+
+        Args:
+            approach (CloseApproach): A CloseApproach object.
+        Returns:
+            [float]: Returns the velocity of a CloseApproach.
+
+        """
+        return approach.velocity
+
+
+
+class DiameterFilter(AttributeFilter):
+    """Subclass of AttributeFilter to filter CloseApproach objects by diameter of the attached neo."""
+    @classmethod
+    def get(cls, approach):
+        """Return approach.neo.diameter for the diameter filter.
+
+        Args:
+            approach (CloseApproach): A CloseApproach object.
+        Returns:
+            [float]: Returns the diameter of the neo attached to the CloseApproach.
+
+        """
+        return approach.neo.diameter
+
+
+class HazardousFilter(AttributeFilter):
+    """Subclass of AttributeFilter to filter CloseApproach objects if attached neo is hazardous"""
+    @classmethod
+    def get(cls, approach):
+        """Return approach.neo.diameter for the diameter filter.
+
+        Args:
+            approach (CloseApproach): A CloseApproach object.
+        Returns:
+            [bool]: Returns hazardous status of the neo attached to the CloseApproach.
+
+        """
+        return approach.neo.hazardous
+
+
 def create_filters(
         date=None, start_date=None, end_date=None,
         distance_min=None, distance_max=None,
@@ -108,8 +184,30 @@ def create_filters(
     :param hazardous: Whether the NEO of a matching `CloseApproach` is potentially hazardous.
     :return: A collection of filters for use with `query`.
     """
-    # TODO: Decide how you will represent your filters.
-    return ()
+
+    filters = set()
+    if date:
+        filters.add(DateFilter(operator.eq, date))
+    if start_date:
+        filters.add(DateFilter(operator.ge, start_date))
+    if end_date:
+        filters.add(DateFilter(operator.le, end_date))
+    if distance_min:
+        filters.add(DistanceFilter(operator.ge, distance_min))
+    if distance_max:
+        filters.add(DistanceFilter(operator.le, distance_max))
+    if velocity_min:
+        filters.add(VelocityFilter(operator.ge, velocity_min))
+    if velocity_max:
+        filters.add(VelocityFilter(operator.le, velocity_max))
+    if diameter_min:
+        filters.add(DiameterFilter(operator.ge, diameter_min))
+    if diameter_max:
+        filters.add(DiameterFilter(operator.le, diameter_max))
+    if hazardous is not None:
+        filters.add(HazardousFilter(operator.eq, hazardous))
+
+    return filters
 
 
 def limit(iterator, n=None):
@@ -119,7 +217,9 @@ def limit(iterator, n=None):
 
     :param iterator: An iterator of values.
     :param n: The maximum number of values to produce.
-    :yield: The first (at most) `n` values from the iterator.
+    :return: The first (at most) `n` values from the iterator.
     """
-    # TODO: Produce at most `n` values from the given iterator.
-    return iterator
+    if n == 0 or n is None:
+        return iterator
+    else:
+        return itertools.islice(iterator, n)
