@@ -21,6 +21,7 @@ class NEODatabase:
     help fetch NEOs by primary designation or by name and to help speed up
     querying for close approaches that match criteria.
     """
+
     def __init__(self, neos, approaches):
         """Create a new `NEODatabase`.
 
@@ -43,11 +44,15 @@ class NEODatabase:
         self._approaches = approaches
 
         # build an index helper to find neo faster for approaches update
-        self.neos_designation_index = {neo.designation: index for index, neo in enumerate(self._neos)}
+        self.neos_designation_index = {
+            neo.designation: index for index, neo in enumerate(self._neos)
+        }
 
         # helper dicts for later searches
         self._designation_to_neo = {neo.designation: neo for neo in self._neos}
-        self._name_to_neo = {neo.name: neo for neo in self._neos if neo.name is not None}
+        self._name_to_neo = {
+            neo.name: neo for neo in self._neos if neo.name is not None
+        }
 
         # Link together the NEOs and their close approaches.
         for approach in self._approaches:
@@ -55,7 +60,6 @@ class NEODatabase:
                 index = self.neos_designation_index[approach._designation]
                 self._neos[index].approaches.append(approach)
                 approach.neo = self._designation_to_neo[approach._designation]
-
 
     def get_neo_by_designation(self, designation):
         """Find and return an NEO by its primary designation.
@@ -69,8 +73,6 @@ class NEODatabase:
         :return: The `NearEarthObject` with the desired primary designation, or `None`.
         """
         return self._designation_to_neo.get(designation.upper(), None)
-
-
 
     def get_neo_by_name(self, name):
         """Find and return an NEO by its name.
@@ -110,6 +112,3 @@ class NEODatabase:
         else:
             for approach in self._approaches:
                 yield approach
-
-
-

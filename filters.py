@@ -39,6 +39,7 @@ class AttributeFilter:
     Concrete subclasses can override the `get` classmethod to provide custom
     behavior to fetch a desired attribute from the given `CloseApproach`.
     """
+
     def __init__(self, op, value):
         """Construct a new `AttributeFilter` from an binary predicate and a reference value.
 
@@ -75,6 +76,7 @@ class AttributeFilter:
 
 class DateFilter(AttributeFilter):
     """Subclass of AttributeFilter to filter CloseApproach objects by date."""
+
     @classmethod
     def get(cls, approach):
         """Return approach.time converted to datetime.datetime object for the date filter.
@@ -90,6 +92,7 @@ class DateFilter(AttributeFilter):
 
 class DistanceFilter(AttributeFilter):
     """Subclass of AttributeFilter to filter CloseApproach objects by distance."""
+
     @classmethod
     def get(cls, approach):
         """Return approach.distance for the distance filter.
@@ -102,8 +105,10 @@ class DistanceFilter(AttributeFilter):
         """
         return approach.distance
 
+
 class VelocityFilter(AttributeFilter):
     """Subclass of AttributeFilter to filter CloseApproach objects by velocity."""
+
     @classmethod
     def get(cls, approach):
         """Return approach.velocity for the velocity filter.
@@ -117,9 +122,9 @@ class VelocityFilter(AttributeFilter):
         return approach.velocity
 
 
-
 class DiameterFilter(AttributeFilter):
     """Subclass of AttributeFilter to filter CloseApproach objects by diameter of the attached neo."""
+
     @classmethod
     def get(cls, approach):
         """Return approach.neo.diameter for the diameter filter.
@@ -135,6 +140,7 @@ class DiameterFilter(AttributeFilter):
 
 class HazardousFilter(AttributeFilter):
     """Subclass of AttributeFilter to filter CloseApproach objects if attached neo is hazardous"""
+
     @classmethod
     def get(cls, approach):
         """Return approach.neo.diameter for the diameter filter.
@@ -149,11 +155,16 @@ class HazardousFilter(AttributeFilter):
 
 
 def create_filters(
-        date=None, start_date=None, end_date=None,
-        distance_min=None, distance_max=None,
-        velocity_min=None, velocity_max=None,
-        diameter_min=None, diameter_max=None,
-        hazardous=None
+    date=None,
+    start_date=None,
+    end_date=None,
+    distance_min=None,
+    distance_max=None,
+    velocity_min=None,
+    velocity_max=None,
+    diameter_min=None,
+    diameter_max=None,
+    hazardous=None,
 ):
     """Create a collection of filters from user-specified criteria.
 

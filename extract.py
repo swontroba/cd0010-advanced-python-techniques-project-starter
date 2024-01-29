@@ -14,8 +14,6 @@ You'll edit this file in Task 2.
 """
 import csv
 import json
-import sys
-from collections.abc import Collection
 
 from models import NearEarthObject, CloseApproach
 
@@ -28,18 +26,20 @@ def load_neos(neo_csv_path):
     """
     near_earth_objects = []
     # TODO: Load NEO data from the given CSV file.
-    with open(neo_csv_path, newline='') as csv_file:
-        csv_reader = csv.DictReader(csv_file, delimiter=',')
+    with open(neo_csv_path, newline="") as csv_file:
+        csv_reader = csv.DictReader(csv_file, delimiter=",")
         for row in csv_reader:
             row["name"] = row["name"] if row["name"] else None
-            row["diameter"] = float(row["diameter"]) if row["diameter"] else float("nan")
+            row["diameter"] = (
+                float(row["diameter"]) if row["diameter"] else float("nan")
+            )
             row["pha"] = False if row["pha"] in ["", "N"] else True
             try:
                 neo = NearEarthObject(
-                    designation = row["pdes"],
-                    name = row["name"],
-                    diameter = row["diameter"],
-                    hazardous = row["pha"],
+                    designation=row["pdes"],
+                    name=row["name"],
+                    diameter=row["diameter"],
+                    hazardous=row["pha"],
                 )
             except Exception as e:
                 print(e)
@@ -48,6 +48,7 @@ def load_neos(neo_csv_path):
 
     return near_earth_objects
 
+
 def load_approaches(cad_json_path):
     """Read close approach data from a JSON file.
 
@@ -55,17 +56,27 @@ def load_approaches(cad_json_path):
     :return: A collection of `CloseApproach`es.
     """
     close_approachs = []
-    # TODO: Load close approach data from the given JSON file.
-    with open(cad_json_path, newline='') as json_file:
+
+    with open(cad_json_path, newline="") as json_file:
         json_reader = json.load(json_file)
-        data = json_reader['data']
+        data = json_reader["data"]
         default_fields = [
-            "des", "orbit_id", "jd", "cd", "dist", "dist_min", "dist_max", "v_rel", "v_inf", "t_sigma_f", "h"
+            "des",
+            "orbit_id",
+            "jd",
+            "cd",
+            "dist",
+            "dist_min",
+            "dist_max",
+            "v_rel",
+            "v_inf",
+            "t_sigma_f",
+            "h",
         ]
-        fields = json_reader.get('fields', default_fields)
+        fields = json_reader.get("fields", default_fields)
         for row in data:
             try:
-                row = dict(zip(json_reader["fields"], row))
+                row = dict(zip(fields, row))
                 approach = CloseApproach(
                     designation=row["des"],
                     time=row["cd"],
@@ -78,4 +89,3 @@ def load_approaches(cad_json_path):
                 close_approachs.append(approach)
 
     return close_approachs
-

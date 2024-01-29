@@ -32,6 +32,7 @@ class NearEarthObject:
     initialized to an empty collection, but eventually populated in the
     `NEODatabase` constructor.
     """
+
     # TODO: How can you, and should you, change the arguments to this constructor?
     # If you make changes, be sure to update the comments in this file.
     def __init__(self, **info):
@@ -54,9 +55,10 @@ class NearEarthObject:
     @property
     def fullname(self):
         """Return a representation of the full name of this NEO."""
-        return f'{self.name} {self.designation}'
+        return f"{self.name} {self.designation}"
 
     def __is_hazardous(self):
+        """ "Returns if this NEO is hazardous in str form"""
         if self.hazardous:
             return "is"
         else:
@@ -64,15 +66,28 @@ class NearEarthObject:
 
     def __str__(self):
         """Return `str(self)`."""
-        # TODO: Use this object's attributes to return a human-readable string representation.
-        # The project instructions include one possibility. Peek at the __repr__
-        # method for examples of advanced string formatting.
         return f"A NearEarthObject NEO {self.fullname} has a diameter of {self.diameter:.3f} km and {self.__is_hazardous()} potentially hazardous."
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
-        return f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, " \
-               f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})"
+        return (
+            f"NearEarthObject(designation={self.designation!r}, name={self.name!r}, "
+            f"diameter={self.diameter:.3f}, hazardous={self.hazardous!r})"
+        )
+
+    def serialize(self):
+        """Return a dict representation of self attributes of current instance.
+
+        Returns:
+            [dict]: Keys associated with self attributes.
+
+        """
+        return {
+            "designation": self.designation,
+            "name": self.name,
+            "diameter_km": self.diameter,
+            "potentially_hazardous": self.hazardous,
+        }
 
 
 class CloseApproach:
@@ -88,6 +103,7 @@ class CloseApproach:
     private attribute, but the referenced NEO is eventually replaced in the
     `NEODatabase` constructor.
     """
+
     def __init__(self, **info):
         """Create a new `CloseApproach`.
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
@@ -117,23 +133,40 @@ class CloseApproach:
 
     def __str__(self):
         """Return `str(self)`."""
-        return f"On {self.time_str}, '{self._designation}'" \
-               f"approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
+        return (
+            f"On {self.time_str}, '{self._designation}'"
+            f"approaches Earth at a distance of {self.distance:.2f} au and a velocity of {self.velocity:.2f} km/s."
+        )
 
     def __repr__(self):
         """Return `repr(self)`, a computer-readable string representation of this object."""
-        return f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, " \
-               f"velocity={self.velocity:.2f}, neo={self.neo!r})"
+        return (
+            f"CloseApproach(time={self.time_str!r}, distance={self.distance:.2f}, "
+            f"velocity={self.velocity:.2f}, neo={self.neo!r})"
+        )
+
+    def serialize(self):
+        """Return a dict representation of self attributes of current instance.
+
+        Returns:
+            [dict]: Keys associated with self attributes.
+
+        """
+        return {
+            "datetime_utc": datetime_to_str(self.time),
+            "distance_au": self.distance,
+            "velocity_km_s": self.velocity,
+        }
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     neo_test = {
-        "designation": "2020 FK", "name": "One REALLY BIG fake asteroid",
-        "diameter": 12.34523423, "hazardous": True}
-    neo_test2 = {
         "designation": "2020 FK",
-        "hazardous": True}
+        "name": "One REALLY BIG fake asteroid",
+        "diameter": 12.34523423,
+        "hazardous": True,
+    }
+    neo_test2 = {"designation": "2020 FK", "hazardous": True}
     neo = NearEarthObject(**neo_test2)
     print(neo.designation)
     print(neo.name)
@@ -141,14 +174,15 @@ if __name__ == '__main__':
     print(neo.hazardous)
     print(neo)
 
-
-    caproch_test = {"designation": "2020 FK", "time": "2099-Dec-31 20:51",
-                    "distance": 12.34523423, "velocity": 12.88}
+    caproch_test = {
+        "designation": "2020 FK",
+        "time": "2099-Dec-31 20:51",
+        "distance": 12.34523423,
+        "velocity": 12.88,
+    }
     ca = CloseApproach(**caproch_test)  # Use any sample data here.
     print(type(ca.time))
     print(ca.time_str)
     print(ca.distance)
     print(ca.velocity)
     print(ca)
-
-
