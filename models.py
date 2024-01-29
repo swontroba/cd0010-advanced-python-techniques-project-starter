@@ -33,10 +33,7 @@ class NearEarthObject:
     `NEODatabase` constructor.
     """
 
-    # TODO: How can you, and should you, change the arguments to this constructor?
-    # If you make changes, be sure to update the comments in this file.
     def __init__(self, **info):
-        # TODO: was **info check if info is ok like this in rest of code
         """Create a new `NearEarthObject`.
 
         :param info: A dictionary of excess keyword arguments supplied to the constructor.
